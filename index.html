@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Stylist - 洗練された音声読み上げツール</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #9c8570;
+            --secondary-color: #d4c8be;
+            --accent-color: #5a4d41;
+            --text-color: #333;
+            --light-bg: #f8f6f4;
+            --white: #ffffff;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--white);
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .tagline {
+            font-weight: 300;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .app-container {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .input-section {
+            padding: 30px;
+            border-bottom: 1px solid var(--secondary-color);
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 1px solid var(--secondary-color);
+            border-radius: 8px;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 16px;
+            resize: vertical;
+            transition: var(--transition);
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(156, 133, 112, 0.2);
+        }
+        
+        .controls-section {
+            padding: 30px;
+            background-color: var(--light-bg);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--accent-color);
+        }
+        
+        select, input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--secondary-color);
+            border-radius: 8px;
+            background-color: var(--white);
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .slider {
+            flex-grow: 1;
+            -webkit-appearance: none;
+            height: 6px;
+            background-color: var(--secondary-color);
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .slider::-webkit-slider-thumb:hover {
+            background-color: var(--accent-color);
+        }
+        
+        .slider-value {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 500;
+            color: var(--accent-color);
+        }
+        
+        .buttons-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 30px;
+            border-top: 1px solid var(--secondary-color);
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            min-width: 160px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--accent-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #c5b9af;
+        }
+        
+        .status-section {
+            padding: 20px 30px;
+            background-color: var(--light-bg);
+            border-top: 1px solid var(--secondary-color);
+        }
+        
+        .status-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .status-text {
+            font-weight: 500;
+            color: var(--accent-color);
+        }
+        
+        .progress-container {
+            height: 8px;
+            background-color: var(--secondary-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .current-text-container {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--white);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 0 8px 8px 0;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        
+        .features-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .feature-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            font-size: 24px;
+        }
+        
+        .feature-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--accent-color);
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .controls-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .buttons-section {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .input-section, .controls-section, .buttons-section, .status-section {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+            }
+            
+            .feature-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Voice Stylist</h1>
+        <p class="tagline">洗練された音声で、あなたの文章に命を吹き込みます</p>
+    </header>
+    
+    <div class="container">
+        <div class="app-container">
+            <div class="input-section">
+                <textarea id="textToRead" placeholder="ここにテキストを貼り付けてください..."></textarea>
+            </div>
+            
+            <div class="controls-section">
+                <div class="control-group">
+                    <label for="voiceSelect">声の種類</label>
+                    <select id="voiceSelect"></select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="rate">読み上げ速度</label>
+                    <div class="slider-container">
+                        <input type="range" id="rate" class="slider" min="0.5" max="2" step="0.1" value="1.2">
+                        <span id="rateValue" class="slider-value">1.2</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="pitch">声の高さ</label>
+                    <div class="slider-container">
+                        <input type="range" id="pitch" class="slider" min="0" max="2" step="0.1" value="1">
+                        <span id="pitchValue" class="slider-value">1</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="chunkSize">文章の分割サイズ</label>
+                    <input type="number" id="chunkSize" min="30" max="500" value="80">
+                </div>
+            </div>
+            
+            <div class="buttons-section">
+                <button id="speakButton" class="btn btn-primary">
+                    <i class="fas fa-play"></i> 読み上げ開始
+                </button>
+                <button id="pauseButton" class="btn btn-secondary">
+                    <i class="fas fa-pause"></i> 一時停止
+                </button>
+                <button id="resumeButton" class="btn btn-secondary">
+                    <i class="fas fa-redo"></i> 再開
+                </button>
+                <button id="stopButton" class="btn btn-secondary">
+                    <i class="fas fa-stop"></i> 停止
+                </button>
+            </div>
+            
+            <div class="status-section">
+                <div class="status-container">
+                    <div id="status" class="status-text">準備完了</div>
+                    <div class="progress-container">
+                        <div id="progressBar" class="progress-bar"></div>
+                    </div>
+                    <div id="currentText" class="current-text-container"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="features-section">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <h3 class="feature-title">最適な速度</h3>
+                <p>デフォルトで1.2倍速に設定。効率的に情報を取り入れながらも、内容を理解しやすい速度で読み上げます。</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-cut"></i>
+                </div>
+                <h3 class="feature-title">スマートな分割</h3>
+                <p>80文字ごとに自然な区切りで分割。途切れることなく、安定した読み上げを実現します。</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <h3 class="feature-title">高品質な音声</h3>
+                <p>お使いのデバイスで利用可能な最高品質の音声エンジンを使用。自然で聞き取りやすい読み上げを提供します。</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Voice Stylist - 洗練された音声読み上げツール</p>
+    </footer>
+
+    <script>
+        // 音声合成のインスタンスを作成
+        const synth = window.speechSynthesis;
+        const textToRead = document.getElementById('textToRead');
+        const voiceSelect = document.getElementById('voiceSelect');
+        const rate = document.getElementById('rate');
+        const rateValue = document.getElementById('rateValue');
+        const pitch = document.getElementById('pitch');
+        const pitchValue = document.getElementById('pitchValue');
+        const chunkSize = document.getElementById('chunkSize');
+        const speakButton = document.getElementById('speakButton');
+        const pauseButton = document.getElementById('pauseButton');
+        const resumeButton = document.getElementById('resumeButton');
+        const stopButton = document.getElementById('stopButton');
+        const statusElement = document.getElementById('status');
+        const progressBar = document.getElementById('progressBar');
+        const currentText = document.getElementById('currentText');
+        
+        let voices = [];
+        let textChunks = [];
+        let currentChunk = 0;
+        let isReading = false;
+        let isPaused = false;
+        let watchdogTimer = null;
+
+        // デフォルトの速度を1.2倍に設定
+        rate.value = 1.2;
+        rateValue.textContent = 1.2;
+        
+        // デフォルトの分割サイズを80文字に設定
+        chunkSize.value = 80;
+
+        // 利用可能な音声を取得
+        function populateVoiceList() {
+            voices = synth.getVoices();
+            voiceSelect.innerHTML = '';
+            
+            let japaneseVoiceFound = false;
+            
+            voices.forEach((voice, i) => {
+                const option = document.createElement('option');
+                option.textContent = `${voice.name} (${voice.lang})`;
+                option.setAttribute('data-lang', voice.lang);
+                option.setAttribute('data-name', voice.name);
+                option.value = i;
+                if (voice.lang.includes('ja-JP') && !japaneseVoiceFound) {
+                    option.selected = true;
+                    japaneseVoiceFound = true;
+                }
+                voiceSelect.appendChild(option);
+            });
+            
+            // 日本語の音声が見つからなかった場合、最初の音声を選択
+            if (!japaneseVoiceFound && voices.length > 0) {
+                voiceSelect.options[0].selected = true;
+            }
+        }
+
+        // 音声リストが変更されたときに呼び出される
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = populateVoiceList;
+        }
+
+        // 初期化時に一度呼び出す
+        setTimeout(populateVoiceList, 100);
+
+        // スライダーの値を表示
+        rate.addEventListener('input', () => {
+            rateValue.textContent = rate.value;
+        });
+
+        pitch.addEventListener('input', () => {
+            pitchValue.textContent = pitch.value;
+        });
+
+        // テキストを適切な長さに分割する関数
+        function splitTextIntoChunks(text, maxLength = 80) {
+            // 句読点で区切る
+            const sentences = text.split(/([。．！？\.\!\?])/);
+            let chunks = [];
+            let currentChunk = '';
+            
+            for (let i = 0; i < sentences.length; i += 2) {
+                const sentence = sentences[i] + (sentences[i+1] || '');
+                
+                if (currentChunk.length + sentence.length < maxLength) {
+                    currentChunk += sentence;
+                } else {
+                    if (currentChunk) chunks.push(currentChunk);
+                    currentChunk = sentence;
+                }
+            }
+            
+            if (currentChunk) chunks.push(currentChunk);
+            
+            // 空のチャンクを削除
+            return chunks.filter(chunk => chunk.trim().length > 0);
+        }
+
+        // 監視タイマーをリセット
+        function resetWatchdog() {
+            if (watchdogTimer) {
+                clearTimeout(watchdogTimer);
+            }
+            
+            watchdogTimer = setTimeout(() => {
+                // 10秒以上経過しても次のチャンクに進まない場合、強制的に次へ
+                if (isReading && !isPaused && synth.speaking) {
+                    console.log('Watchdog: 読み上げが停止したようです。次のチャンクに進みます。');
+                    synth.cancel(); // 現在の読み上げをキャンセル
+                    currentChunk++; // 次のチャンクへ
+                    if (currentChunk < textChunks.length) {
+                        setTimeout(speakNextChunk, 500); // 少し待ってから次のチャンクを読み上げ
+                    } else {
+                        finishReading();
+                    }
+                }
+            }, 10000); // 10秒のタイムアウト
+        }
+
+        // 読み上げ完了処理
+        function finishReading() {
+            isReading = false;
+            statusElement.textContent = '読み上げ完了';
+            progressBar.style.width = '100%';
+            if (watchdogTimer) {
+                clearTimeout(watchdogTimer);
+                watchdogTimer = null;
+            }
+            currentText.textContent = '';
+        }
+
+        // 次のチャンクを読み上げる関数
+        function speakNextChunk() {
+            if (currentChunk >= textChunks.length || !isReading) {
+                finishReading();
+                return;
+            }
+            
+            // 進捗状況を更新
+            const progress = Math.floor((currentChunk / textChunks.length) * 100);
+            progressBar.style.width = `${progress}%`;
+            statusElement.textContent = `読み上げ中: ${currentChunk + 1}/${textChunks.length} (${progress}%)`;
+            
+            // 現在読み上げているテキストを表示
+            currentText.textContent = textChunks[currentChunk];
+            
+            const utterance = new SpeechSynthesisUtterance(textChunks[currentChunk]);
+            
+            // 選択された音声を設定
+            const selectedVoice = voices[voiceSelect.value];
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+            
+            // 速度と高さを設定（デフォルトで1.2倍速）
+            utterance.rate = parseFloat(rate.value);
+            utterance.pitch = parseFloat(pitch.value);
+            
+            // 読み終わったら次のチャンクへ
+            utterance.onend = function() {
+                if (isReading) {
+                    currentChunk++;
+                    setTimeout(speakNextChunk, 300); // 少し間を空けて次のチャンクを読み上げ
+                }
+            };
+            
+            // エラー処理
+            utterance.onerror = function(event) {
+                console.error('読み上げエラー:', event);
+                statusElement.textContent = `エラーが発生しました: ${event.error || '不明なエラー'}`;
+                
+                // エラーが発生しても次のチャンクを試す
+                setTimeout(() => {
+                    if (isReading) {
+                        currentChunk++;
+                        speakNextChunk();
+                    }
+                }, 1000);
+            };
+            
+            // 監視タイマーをリセット
+            resetWatchdog();
+            
+            // 読み上げ開始
+            synth.speak(utterance);
+        }
+
+        // 読み上げボタンのクリックイベント
+        speakButton.addEventListener('click', () => {
+            // 既に読み上げ中なら一旦停止
+            if (synth.speaking) {
+                synth.cancel();
+            }
+            
+            if (textToRead.value.trim() !== '') {
+                // テキストを分割（ユーザー指定のサイズで、デフォルトは80文字）
+                const maxChunkSize = parseInt(chunkSize.value) || 80;
+                textChunks = splitTextIntoChunks(textToRead.value, maxChunkSize);
+                currentChunk = 0;
+                isReading = true;
+                isPaused = false;
+                
+                // 読み上げ開始
+                speakNextChunk();
+            }
+        });
+
+        // 一時停止ボタン
+        pauseButton.addEventListener('click', () => {
+            if (synth.speaking && !isPaused) {
+                synth.pause();
+                isPaused = true;
+                statusElement.textContent = '一時停止中';
+                if (watchdogTimer) {
+                    clearTimeout(watchdogTimer);
+                }
+            }
+        });
+
+        // 再開ボタン
+        resumeButton.addEventListener('click', () => {
+            if (isPaused) {
+                synth.resume();
+                isPaused = false;
+                statusElement.textContent = `読み上げ中: ${currentChunk + 1}/${textChunks.length}`;
+                resetWatchdog();
+            }
+        });
+
+        // 停止ボタン
+        stopButton.addEventListener('click', () => {
+            isReading = false;
+            isPaused = false;
+            synth.cancel();
+            statusElement.textContent = '停止しました';
+            if (watchdogTimer) {
+                clearTimeout(watchdogTimer);
+                watchdogTimer = null;
+            }
+            currentText.textContent = '';
+        });
+
+        // ページが閉じられる前に音声を停止
+        window.addEventListener('beforeunload', () => {
+            if (synth.speaking) {
+                synth.cancel();
+            }
+        });
+    </script>
+</body>
+</html>
